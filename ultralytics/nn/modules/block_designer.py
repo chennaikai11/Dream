@@ -4,11 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ultralytics.utils.torch_utils import fuse_conv_and_bn
-
-from .conv import Conv, DWConv, GhostConv, LightConv, RepConv, autopad, CBAM
-from .transformer import TransformerBlock
-
+from .conv import Conv
 
 
 def channel_shuffle_part(x: torch.Tensor, groups: int = 4) -> torch.Tensor:
@@ -282,7 +278,6 @@ class DRA(nn.Module):
         N, C, H, W = x.shape
         assert C == self.inp, f"Expected in channels {self.inp} but got {C}"
 
-        # 若自适应 k 改变，重建 conv
         k_eff = self._get_ksize(C)
         if k_eff != self.eca_conv.kernel_size[0]:
             pad = (k_eff - 1) // 2
@@ -303,7 +298,6 @@ class DRA(nn.Module):
             beta_e = self.beta * torch.ones((1, C, 1, 1), device=x.device, dtype=x.dtype)
             gate   = 1.0 + beta_e * (a - 1.0)                   # 公式不变
 
-        # 可选 clip（你当前禁用）
         if self.gate_clip is not None:
             lo, hi = self.gate_clip
             gate = torch.clamp(gate, lo, hi)
@@ -348,15 +342,15 @@ class C2f_PA_old(nn.Module):
 
     def __init__(self, c1: int, c2: int, n: int = 1, shortcut: bool = False, g: int = 1, e: float = 0.5):
         super().__init__()
-        self.n = int(n)                     # ← 必须显式保存
-        self.c = int(c2 * e)                # ← 与 n 无关（保持 C2f 规范）
+        self.n = int(n)
+        self.c = int(c2 * e)
 
         self.cv1 = Conv(c1, 2 * self.c, 1, 1)
-        self.m = nn.ModuleList(             # ← 堆 self.n 个子块
+        self.m = nn.ModuleList(
             Bottleneck_Pb(self.c, self.c, shortcut, g, k=((3, 3), (3, 3)), e=1.0)
             for _ in range(self.n)
         )
-        self.cv2 = Conv((2 + self.n) * self.c, c2, 1)  # (2+n)*c → c2
+        self.cv2 = Conv((2 + self.n) * self.c, c2, 1)
 
         self.attention = DRA(c2, None)
         # self.attention = ECA(c2, 1)
