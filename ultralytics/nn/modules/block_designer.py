@@ -29,33 +29,20 @@ class SMConv(nn.Module):
         self.n_div = int(n_div)
         self.kernel_size = int(kernel_size)
         self.d = int(d)
+        self.channels = int(channels)
 
-        init_c_conv = max(1, channels // self.n_div)
-        self.conv3 = Conv(init_c_conv, init_c_conv, k=self.kernel_size, s=1, p=None, d=self.d)
+        self.c_conv = self.channels // self.n_div
+        self.c_skip = self.channels - self.c_conv
+        if self.c_conv > 0:
+            self.conv3 = Conv(self.c_conv, self.c_conv, k=self.kernel_size, s=1, p=None, d=self.d)
+        else:
+            self.conv3 = None
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        C = x.size(1)
-        c_conv = C // self.n_div
-        c_skip = C - c_conv
-        if c_conv <= 0:
+        if self.c_conv <= 0 or self.conv3 is None:
             return x
 
-        if self.conv3.conv.in_channels != c_conv or self.conv3.conv.out_channels != c_conv:
-            new_conv3 = Conv(c_conv, c_conv, k=self.kernel_size, s=1, p=None, d=self.d).to(device=x.device, dtype=x.dtype)
-            with torch.no_grad():
-                old_w = self.conv3.conv.weight.to(device=new_conv3.conv.weight.device, dtype=new_conv3.conv.weight.dtype)
-                new_w = new_conv3.conv.weight
-                copy_oc = min(old_w.shape[0], new_w.shape[0])
-                copy_ic = min(old_w.shape[1], new_w.shape[1])
-                new_w[:copy_oc, :copy_ic].copy_(old_w[:copy_oc, :copy_ic])
-                if getattr(self.conv3.conv, "bias", None) is not None and getattr(new_conv3.conv, "bias", None) is not None:
-                    old_b = self.conv3.conv.bias.to(device=new_conv3.conv.bias.device, dtype=new_conv3.conv.bias.dtype)
-                    new_b = new_conv3.conv.bias
-                    copy_bc = min(old_b.shape[0], new_b.shape[0])
-                    new_b[:copy_bc].copy_(old_b[:copy_bc])
-            self.conv3 = new_conv3
-
-        x1, x2 = torch.split(x, [c_conv, c_skip], dim=1)
+        x1, x2 = torch.split(x, [self.c_conv, self.c_skip], dim=1)
         y1 = self.conv3(x1)  # 保形：H×W 不变
         return torch.cat([y1, x2], dim=1)
 
