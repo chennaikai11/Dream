@@ -7,9 +7,9 @@
 
 ### 论文引用
 
-我们的 DREAM 论文已被 *Expert Systems with Applications* 接收/发表。若本项目对您的研究有帮助，欢迎引用我们的文章：
+我们的 DREAM 论文已被 _Expert Systems with Applications_ 接收/发表。若本项目对您的研究有帮助，欢迎引用我们的文章：
 
-Rong Zhu, Linfeng Shi, and Zheng He. "DREAM: Drone-based real-time efficient adaptive multidomain network." *Expert Systems with Applications*, 327, 132852, 2026. https://doi.org/10.1016/j.eswa.2026.132852
+Rong Zhu, Linfeng Shi, and Zheng He. "DREAM: Drone-based real-time efficient adaptive multidomain network." _Expert Systems with Applications_, 327, 132852, 2026. https://doi.org/10.1016/j.eswa.2026.132852
 
 论文网页：https://www.sciencedirect.com/science/article/pii/S0957417426017653
 
@@ -58,9 +58,9 @@ We sincerely thank the Ultralytics team for their open-source contributions.
 
 ### Citation
 
-Our DREAM paper has been accepted/published in *Expert Systems with Applications*. If this repository is helpful for your research, please consider citing our work:
+Our DREAM paper has been accepted/published in _Expert Systems with Applications_. If this repository is helpful for your research, please consider citing our work:
 
-Rong Zhu, Linfeng Shi, and Zheng He. "DREAM: Drone-based real-time efficient adaptive multidomain network." *Expert Systems with Applications*, 327, 132852, 2026. https://doi.org/10.1016/j.eswa.2026.132852
+Rong Zhu, Linfeng Shi, and Zheng He. "DREAM: Drone-based real-time efficient adaptive multidomain network." _Expert Systems with Applications_, 327, 132852, 2026. https://doi.org/10.1016/j.eswa.2026.132852
 
 Article page: https://www.sciencedirect.com/science/article/pii/S0957417426017653
 
@@ -95,7 +95,7 @@ python train.py
 
 You can further adjust training arguments and dataset settings based on your experiment setup.
 
-### Acknowledgement
+### Acknowledgment
 
 This project is developed based on the Ultralytics codebase.  
 Ultralytics GitHub: https://github.com/ultralytics/ultralytics
