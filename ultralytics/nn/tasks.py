@@ -69,6 +69,7 @@ from ultralytics.nn.modules import (
     YOLOESegment,
     v10Detect,
 )
+from ultralytics.nn.modules.block_designer import MDFC, C3k2PA, C3k2Pb
 from ultralytics.utils import DEFAULT_CFG_DICT, LOGGER, YAML, colorstr, emojis
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
 from ultralytics.utils.loss import (
@@ -92,7 +93,7 @@ from ultralytics.utils.torch_utils import (
     smart_inference_mode,
     time_sync,
 )
-from ultralytics.nn.modules.block_designer import MDFC, C3k2Pb, C3k2PA
+
 
 class BaseModel(torch.nn.Module):
     """Base class for all YOLO models in the Ultralytics family.
